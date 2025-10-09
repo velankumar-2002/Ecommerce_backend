@@ -15,4 +15,4 @@ use Illuminate\Support\Facades\Route;
 */
 
 
-Route::get('login-signup',[LoginController::class,'loginSignUp'])->name('login.signup');
+Route::get('',[LoginController::class,'loginSignUp'])->name('login.signup');

@@ -456,6 +456,11 @@
                         <input type="password" name="register_password" id="register_password" class="register_password" placeholder="Password" />
                     </div>
                     <div class="register_password_error error"></div>
+                    <div class="input-field">
+                        <i class="fas fa-mobile"></i>
+                        <input type="text" name="register_mobile_no" id="register_mobile_no" class="register_mobile_no" placeholder="Mobile No" />
+                    </div>
+                    <div class="register_mobile_no_error error"></div>
                     <button type="submit" class="btn" id="signup_button">Sign Up</button>
                 </form>
             </div>
@@ -565,6 +570,9 @@
                         register_password: {
                             required: true,
                         },
+                        register_mobile_no: {
+                            required: true,
+                        },
                     },
                     messages: {
                         register_username: {
@@ -576,6 +584,9 @@
                         register_password: {
                             required: "Password is Mandatory.",
                         },
+                        register_mobile_no: {
+                            required: "Mobile No is Mandatory.",
+                        },
                     },
                     errorPlacement: function(error, element) {
                         if (element.hasClass('register_username')) {
@@ -584,7 +595,9 @@
                             error.appendTo('.register_email_error');
                         } else if (element.hasClass('register_password')) {
                             error.appendTo('.register_password_error');
-                        } else {
+                        } else if (element.hasClass('register_mobile_no')) {
+                            error.appendTo('.register_mobile_no_error');
+                        }else {
                             error.insertAfter(element);
                         }
                     },
@@ -595,7 +608,7 @@
 
             });
         });
- 
+
     </script>
 
 </body>
