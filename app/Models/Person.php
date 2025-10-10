@@ -17,7 +17,8 @@ class Person extends Model
         'email',
         'password',
         'mobile_no',
-        'person_type'
+        'person_type',
+        'is_deleted'
     ];
 
     protected static function boot()
