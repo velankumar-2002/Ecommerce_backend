@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <script src="https://kit.fontawesome.com/64d58efce2.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" crossorigin="anonymous" />
     <style>
@@ -439,11 +439,12 @@
                     <div class="login_password_error"></div>
                     <button type="submit" class="btn solid" id="login_button">Login</button>
                 </form>
-                <form action="#" class="sign-up-form">
+                <form action="{{route('save.register')}}" class="sign-up-form" method="POST">
+                    @csrf
                     <h2 class="title">Sign up</h2>
                     <div class="input-field">
                         <i class="fas fa-user"></i>
-                        <input type="text" name="register_username" id="register_username" class="register_username" placeholder="Username" />
+                        <input type="text" name="register_username" id="register_username" class="register_username letters" placeholder="Username" />
                     </div>
                     <div class="register_username_error error"></div>
                     <div class="input-field">
@@ -458,7 +459,7 @@
                     <div class="register_password_error error"></div>
                     <div class="input-field">
                         <i class="fas fa-mobile"></i>
-                        <input type="text" name="register_mobile_no" id="register_mobile_no" class="register_mobile_no" placeholder="Mobile No" />
+                        <input type="text" name="register_mobile_no" id="register_mobile_no" class="register_mobile_no numbers" placeholder="Mobile No" />
                     </div>
                     <div class="register_mobile_no_error error"></div>
                     <button type="submit" class="btn" id="signup_button">Sign Up</button>
@@ -505,6 +506,35 @@
 
     {{-- cdn ends --}}
 
+    {{-- toast scripts starts --}}
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    @if(session('success'))
+    <script>
+        Swal.fire({
+            icon: 'success',
+            title: 'Success',
+            text: '{{ session('success') }}',
+            showConfirmButton: false,
+            timer: 2000
+        });
+    </script>
+    @endif
+
+    @if(session('error'))
+    <script>
+        Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: '{{ session('error') }}',
+            showConfirmButton: false,
+            timer: 2000
+        });
+    </script>
+    @endif
+
+    {{-- toast scripts ends --}}
 
     <script>
         const sign_in_btn = document.querySelector("#sign-in-btn");
@@ -513,6 +543,15 @@
 
         sign_up_btn.addEventListener("click", () => {
             container.classList.add("sign-up-mode");
+            $('.register_username').val('');
+            $('.register_email').val('');
+            $('.register_password').val('');
+            $('.register_mobile_no').val('');
+            $('.register_username_error').text('');
+            $('.register_email_error').text('');
+            $('.register_password_error').text('');
+            $('.register_mobile_no_error').text('');
+
         });
 
         sign_in_btn.addEventListener("click", () => {
@@ -524,6 +563,9 @@
     <script>
 
         $(document).ready(function(){
+
+            // login process starts
+
             $('#login_button').on('click',function(){
                 $(".sign-in-form").validate({
                     rules: {
@@ -557,6 +599,10 @@
                 });
             });
 
+            // login process ends
+
+            // registeration process starts
+
             $('#signup_button').on('click',function(){
 
                 $(".sign-up-form").validate({
@@ -566,12 +612,39 @@
                         },
                         register_email: {
                             required: true,
+                            remote: {
+                            url: "{{ route('verify.email') }}",
+                            type: "post",
+                            headers: {
+                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                            },
+                            data: {
+                                type:"register_email",
+                                email: function() {
+                                        return $("#register_email").val();
+                                    }
+                                }
+                            }
                         },
                         register_password: {
                             required: true,
                         },
                         register_mobile_no: {
                             required: true,
+                             minlength: 10,
+                             maxlength: 10,
+                            remote: {
+                            url: "{{ route('verify.mobile.no') }}",
+                            type: "post",
+                            headers: {
+                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                            },
+                            data: {
+                                mobile_no: function() {
+                                        return $("#register_mobile_no").val();
+                                    }
+                                }
+                            }
                         },
                     },
                     messages: {
@@ -580,12 +653,16 @@
                         },
                         register_email: {
                             required: "Email is Mandatory.",
+                            remote: "This Email address is already registered.",
                         },
                         register_password: {
                             required: "Password is Mandatory.",
                         },
                         register_mobile_no: {
                             required: "Mobile No is Mandatory.",
+                            remote: "Mobile No is already exists.",
+                            minlength: "Mobile number must be exactly 10 digits.",
+                            maxlength: "Mobile number must be exactly 10 digits.",
                         },
                     },
                     errorPlacement: function(error, element) {
@@ -607,6 +684,38 @@
                 });
 
             });
+
+            // registeration process ends
+
+
+            // letters only typed
+         $('.letters').on('input', function() {
+            var inputValue = $(this).val();
+            var cleanedValue = inputValue.replace(/[^a-zA-Z]/g, '');
+            $(this).val(cleanedValue);
+        });
+
+            // numbers only typed
+        $('.numbers').on('input', function() {
+            var inputValue = $(this).val();
+            var cleanedValue = inputValue.replace(/[^0-9]/g, '');
+            $(this).val(cleanedValue);
+        });
+
+            // mobile mumber length validation
+        $('.register_mobile_no').on('input', function() {
+            var val = $(this).val().replace(/[^0-9]/g, '');
+            if (val.length > 10) val = val.substring(0, 10);
+            $(this).val(val);
+            }).on('keypress', function(e) {
+                if (!/[0-9]/.test(e.key) || $(this).val().length >= 10) {
+                    e.preventDefault();
+                }
+        });
+
+
+
+
         });
 
     </script>
