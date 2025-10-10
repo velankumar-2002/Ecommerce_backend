@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('password')->nullable();
             $table->string('mobile_no')->nullable();
             $table->string('person_type')->default('customer');
+            $table->tinyInteger('is_deleted')->default(0);
             $table->timestamps();
         });
     }

@@ -425,7 +425,8 @@
     <div class="container">
         <div class="forms-container">
             <div class="signin-signup">
-                <form action="#" class="sign-in-form">
+                <form action="{{route('verify.login')}}" method="POST" class="sign-in-form">
+                    @csrf
                     <h2 class="title">Sign in</h2>
                     <div class="input-field">
                         <i class="fas fa-envelope"></i>
@@ -556,6 +557,10 @@
 
         sign_in_btn.addEventListener("click", () => {
             container.classList.remove("sign-up-mode");
+            $('.login_email').val('');
+            $('.login_password').val('');
+            $('.login_email_error').text('');
+            $('.login_password_error').text('');
         });
 
     </script>
@@ -571,17 +576,45 @@
                     rules: {
                         login_email: {
                             required: true,
+                            remote: {
+                            url: "{{ route('verify.email') }}",
+                            type: "post",
+                            headers: {
+                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                            },
+                            data: {
+                                type:"login_email",
+                                email: function() {
+                                        return $("#login_email").val();
+                                    }
+                                }
+                            }
                         },
                         login_password: {
                             required: true,
+                            remote: {
+                            url: "{{ route('verify.password') }}",
+                            type: "post",
+                            headers: {
+                                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                            },
+                            data: {
+                                email:$("#login_email").val(),
+                                password: function() {
+                                        return $("#login_password").val();
+                                    }
+                                }
+                            }
                         },
                     },
                     messages: {
                         login_email: {
                             required: "Email is Mandatory.",
+                            remote: "Email is Invalid.",
                         },
                         login_password: {
                             required: "Password is Mandatory.",
+                            remote: "Password is Mismatch!",
                         },
                     },
                     errorPlacement: function(error, element) {
