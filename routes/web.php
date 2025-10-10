@@ -16,7 +16,10 @@ use Illuminate\Support\Facades\Route;
 */
 
 
-Route::get('',[LoginController::class,'loginSignUp'])->name('login.signup');
+Route::get('/',[LoginController::class,'loginSignUp'])->name('login.signup');
+Route::post('/save-register',[LoginController::class,'saveRegister'])->name('save.register');
+Route::post('verify-email',[LoginController::class,'verifyEmail'])->name('verify.email');
+Route::post('verify-mobile-no',[LoginController::class,'verifyMobileno'])->name('verify.mobile.no');
 
 
 Route::prefix('admin')->group(function () {
