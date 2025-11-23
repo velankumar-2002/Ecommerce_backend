@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\PersonController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -15,6 +16,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+// Login Register Page Functionality starts
 
 Route::get('/',[LoginController::class,'loginSignUp'])->name('login.signup');
 Route::post('/save-register',[LoginController::class,'saveRegister'])->name('save.register');
@@ -24,8 +26,17 @@ Route::post('verify-mobile-no',[LoginController::class,'verifyMobileno'])->name(
 Route::post('verify-password',[LoginController::class,'verifyPassword'])->name('verify.password');
 
 
+// Dashboard Page Functionality starts
+
 
 Route::prefix('admin')->group(function () {
-    Route::get('/dashboard',[DashboardController::class,'dashboard'])->name('login.signup');
+    Route::get('/dashboard',[DashboardController::class,'dashboard'])->name('dashboard');
+});
+
+
+// Person Page Functionality starts
+
+Route::prefix('admin/persons')->group(function () {
+    Route::get('/view-persons-lists',[PersonController::class,'viewPersonList'])->name('view.persons.list');
 });
 

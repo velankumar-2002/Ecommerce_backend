@@ -53,6 +53,20 @@
             Scrollbar.init(document.querySelector('#sidenav-scrollbar'), options);
         }
     </script>
+    {{-- side navbar highlighted starts --}}
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const links = document.querySelectorAll('.nav-link');
+            links.forEach(link => {
+                if (link.href === window.location.href) {
+                    link.classList.add('active', 'bg-gradient-primary');
+                } else {
+                    link.classList.remove('active', 'bg-gradient-primary');
+                }
+            });
+        });
+    </script>
+    {{-- side navbar highlighted ends --}}
         @yield('main-scripts')
   <!-- Github buttons -->
   <script async defer src="https://buttons.github.io/buttons.js"></script>
