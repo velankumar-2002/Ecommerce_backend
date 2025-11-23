@@ -55,7 +55,7 @@
                           13 minutes ago
                         </p>
                       </div>
-                    </div>
+                    </div>  
                   </a>
                 </li>
                 <li class="mb-2">
